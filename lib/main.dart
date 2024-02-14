@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
@@ -82,7 +82,7 @@ class _SharedItemPageState extends State<SharedItemPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   //If there's no shared media, we assume the app was launched by itself. Thus, we tell the user to share media to it.
-                  //If there's media, we display the path to it.
+                  //If there's media, we display it (an image or a thumbnail, if it is a video file).
                   children: _sharedMedia.isEmpty
                       ? <Widget>[
                           const Text(
@@ -95,9 +95,25 @@ class _SharedItemPageState extends State<SharedItemPage> {
                           const Text('Shared media:',
                               style: TextStyle(fontSize: 25.0),
                               textAlign: TextAlign.center),
-                          Text(_sharedMedia
+                         /* Text(_sharedMedia
                               .map((files) => files.toMap())
-                              .join(",\n----------\n"))
+                              .join(",\n----------\n")),*/
+                          Container(
+                            height: 750,
+                            child: ListView.builder(
+                              itemCount: _sharedMedia.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10),
+                                  child: Image.file(
+                                          File(_sharedMedia[index].mimeType!.startsWith('image/') ? _sharedMedia[index].path : _sharedMedia[index].thumbnail!),
+                                          height: 550,
+                                          fit: BoxFit.contain,
+                                        )
+                                );
+                              },
+                            ),
+                          )
                         ],
                 )),
           ],
